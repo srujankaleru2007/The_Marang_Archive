@@ -1,0 +1,28 @@
+{
+  "name": "@marang/backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fastify API server for Marang Archive.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc --project tsconfig.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
+    "test": "vitest run",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\""
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.2",
+    "@fastify/rate-limit": "^10.2.2",
+    "fastify": "^5.2.1",
+    "fastify-type-provider-zod": "^4.0.2",
+    "pino": "^9.6.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "tsx": "^4.19.2",
+    "vitest": "^3.0.5"
+  }
+}

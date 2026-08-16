@@ -43,6 +43,11 @@ module.exports = {
   },
   overrides: [
     {
+      // TypeScript ESM source imports use .js specifiers for emitted files.
+      files: ["backend/src/**/*.ts"],
+      rules: { "import/no-unresolved": "off" },
+    },
+    {
       // Plain JS / JSX files — disable TS-only rules
       files: ["*.js", "*.jsx", "*.cjs", "*.mjs"],
       rules: {

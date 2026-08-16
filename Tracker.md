@@ -2,8 +2,8 @@
 # Marang Archive
 
 **Last Updated:** 2026-08-16
-**Current Phase:** Phase 1 — Backend Foundation
-**Overall Status:** Phase 0 (Repository Foundation) complete. Monorepo scaffolded, tooling verified, initial commit created.
+**Current Phase:** Phase 2 — Database
+**Overall Status:** Phase 1 (Backend Foundation) complete. Fastify server and acceptance checks verified.
 
 > This is a living document. Update it continuously as work progresses.
 > Do NOT track progress in `ImplementationPlan.md` — that is a static specification.
@@ -13,9 +13,9 @@
 
 ## Current Phase
 
-**Phase 1 — Backend Foundation**
+**Phase 2 — Database**
 
-Goal: A running Fastify server with a health endpoint, structured logging, configuration loading, and a consistent error-handling framework. No business logic yet.
+Goal: PostgreSQL connected, Prisma configured, full schema migrated, and a seed script available for local development.
 
 See `ImplementationPlan.md §4` for full task list and acceptance criteria.
 
@@ -23,26 +23,22 @@ See `ImplementationPlan.md §4` for full task list and acceptance criteria.
 
 ## Current Objective
 
-Initialize `backend/` workspace package; install and configure Fastify + pino; implement Zod-validated config loader; implement `MarangError` hierarchy and global error handler; add `GET /health`; wire CORS + rate limiting plugins.
+Initialize Prisma and the database layer according to `Schema.md`.
 
 ---
 
 ## In Progress
 
-_Phase 1 has not started yet._
+_Phase 2 has not started yet._
 
 ---
 
 ## Next
 
-- [ ] Initialize `backend/` workspace package (package.json + tsconfig.json extending base)
-- [ ] Install Fastify + pino + zod integration
-- [ ] Implement `backend/src/shared/config.ts` (Zod-validated config loader)
-- [ ] Implement `backend/src/shared/errors.ts` (`MarangError` hierarchy)
-- [ ] Implement global Fastify error handler + request ID middleware
-- [ ] Add `GET /api/v1/health` endpoint (no auth)
-- [ ] Wire CORS + rate limiting plugins
-- [ ] Unit tests for error handler and config loader
+- [ ] Install Prisma in `backend/`
+- [ ] Create the Prisma schema and initial migration
+- [ ] Add the Prisma client singleton
+- [ ] Add the development seed script
 
 ---
 
@@ -166,11 +162,29 @@ _Populated from `ImplementationPlan.md`. Only add items here when the phase abov
 - [x] ESLint runs without configuration errors (`pnpm lint`)
 - [x] No secrets in `.env.example` — key names only
 
+### Phase 1 — Backend Foundation ✅ (2026-08-16)
+
+- [x] Initialized the `@marang/backend` workspace package with TypeScript scripts
+- [x] Added Fastify, pino, Zod integration, CORS, rate limiting, Vitest, and development tooling
+- [x] Added validated application configuration with clear startup errors
+- [x] Added the `MarangError` hierarchy and global error response mapping
+- [x] Added request ID correlation to structured logs and `x-request-id` responses
+- [x] Added `GET /api/v1/health` returning `{ data: { status: "ok", timestamp } }`
+- [x] Added configuration and API health tests
+
+### Phase 1 Acceptance Criteria ✅
+
+- [x] Live server returned `200` from `GET /api/v1/health`
+- [x] Validation and unexpected errors use the documented response envelope
+- [x] Unhandled errors return `500 INTERNAL_ERROR` without stack traces
+- [x] Structured logs include request IDs and module context
+- [x] TypeScript compilation, lint, and all 4 backend tests pass
+
 ---
 
 ## Blocked
 
-_Phase 1+ requires the services in `docker-compose.yml` to be running. Docker Desktop is not installed on the current machine — install Docker (or use an alternative container runtime) before starting Phase 2 (Database). Phase 1 itself does not require Docker._
+_Phase 2 requires the services in `docker-compose.yml` to be running. Docker Desktop is not installed on the current machine — install Docker (or use an alternative container runtime) before starting the database phase._
 
 > When adding a blocker, use this format:
 > **[BLOCKED]** Short description — reason — what is needed to unblock

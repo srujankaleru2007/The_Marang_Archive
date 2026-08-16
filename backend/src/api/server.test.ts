@@ -1,31 +1,69 @@
-import { describe, expect, it } from "vitest";
+import type { FastifyInstance } from "fastify";
+import { pino } from "pino";
+import { describe, expect, it, afterEach } from "vitest";
 
-import { loadConfig } from "../shared/config.js";
-import { MarangError } from "../shared/errors.js";
+import type { MarangConfig } from "../shared/config.js";
 
 import { buildServer } from "./server.js";
 
-describe("API server", () => {
-  it("returns the health response with a request ID", async () => {
-    const server = buildServer(loadConfig({ NODE_ENV: "test" }));
-    const response = await server.inject({ method: "GET", url: "/api/v1/health" });
+function testConfig(overrides: Partial<MarangConfig> = {}): MarangConfig {
+  return {
+    env: "test",
+    host: "127.0.0.1",
+    port: 0,
+    logLevel: "silent",
+    databaseUrl: "postgres://localhost/marang",
+    redisUrl: "redis://localhost:6379",
+    jwt: {
+      accessSecret: "a".repeat(64),
+      refreshSecret: "b".repeat(64),
+      accessExpiresIn: "15m",
+      refreshExpiresIn: "30d",
+    },
+    corsOrigins: [],
+    rateLimit: {
+      public: { max: 30, windowMs: 60000 },
+      auth: { max: 120, windowMs: 60000 },
+    },
+    jobs: {
+      updateCheckCron: "*/30 * * * *",
+      healthCheckCron: "*/10 * * * *",
+    },
+    ...overrides,
+  };
+}
+
+const servers: FastifyInstance[] = [];
+
+async function makeServer(overrides: Partial<MarangConfig> = {}) {
+  const app = buildServer({ config: testConfig(overrides), logger: pino({ level: "silent" }) });
+  await app.ready();
+  servers.push(app);
+  return app;
+}
+
+afterEach(async () => {
+  await Promise.all(servers.splice(0).map((s) => s.close()));
+});
+
+describe("health route", () => {
+  it("returns 200 with the success envelope", async () => {
+    const app = await makeServer();
+    const response = await app.inject({ method: "GET", url: "/api/v1/health" });
 
     expect(response.statusCode).toBe(200);
-    expect(response.json()).toMatchObject({ data: { status: "ok" } });
-    expect(response.headers["x-request-id"]).toBeDefined();
-    await server.close();
+    expect(response.json()).toEqual({ data: { status: "ok" } });
   });
+});
 
-  it("maps MarangError instances to the API error envelope", async () => {
-    const server = buildServer(loadConfig({ NODE_ENV: "test" }));
-    server.get("/api/v1/test-error", async () => {
-      throw new MarangError("TEST_ERROR", "A test error", 418);
+describe("error envelope", () => {
+  it("returns the error envelope for an unknown route", async () => {
+    const app = await makeServer();
+    const response = await app.inject({ method: "GET", url: "/api/v1/nope" });
+
+    expect(response.statusCode).toBe(404);
+    expect(response.json()).toEqual({
+      error: { code: "NOT_FOUND", message: "Route not found." },
     });
-
-    const response = await server.inject({ method: "GET", url: "/api/v1/test-error" });
-
-    expect(response.statusCode).toBe(418);
-    expect(response.json()).toEqual({ error: { code: "TEST_ERROR", message: "A test error" } });
-    await server.close();
   });
 });

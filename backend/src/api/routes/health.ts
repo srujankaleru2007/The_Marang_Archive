@@ -1,7 +1,24 @@
 import type { FastifyInstance } from "fastify";
+import { z } from "zod/v4";
 
-export async function healthRoutes(server: FastifyInstance): Promise<void> {
-  server.get("/health", async () => ({
-    data: { status: "ok", timestamp: new Date().toISOString() },
-  }));
+const healthResponseSchema = z.object({
+  data: z.object({
+    status: z.literal("ok"),
+  }),
+});
+
+export async function healthRoutes(app: FastifyInstance) {
+  app.get(
+    "/api/v1/health",
+    {
+      schema: {
+        response: {
+          200: healthResponseSchema,
+        },
+      },
+    },
+    async () => {
+      return { data: { status: "ok" as const } };
+    },
+  );
 }

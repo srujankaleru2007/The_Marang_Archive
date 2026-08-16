@@ -1,13 +1,30 @@
+import "dotenv/config";
 import { buildServer } from "./api/server.js";
-import { loadConfig } from "./shared/config.js";
-import { logger } from "./shared/logger.js";
+import { loadConfig, ConfigError } from "./shared/config.js";
+import { createLogger } from "./shared/logger.js";
 
-const config = loadConfig();
-const server = buildServer(config);
+async function main(): Promise<void> {
+  let config;
+  try {
+    config = loadConfig();
+  } catch (error) {
+    if (error instanceof ConfigError) {
+      // eslint-disable-next-line no-console
+      console.error(error.message);
+      process.exit(1);
+    }
+    throw error;
+  }
 
-try {
-  await server.listen({ port: config.port, host: "0.0.0.0" });
-} catch (error) {
-  logger.error({ err: error, module: "startup" }, "Failed to start server");
-  process.exitCode = 1;
+  const logger = createLogger(config);
+  const server = buildServer({ config, logger });
+
+  try {
+    await server.listen({ host: config.host, port: config.port });
+  } catch (error) {
+    server.log.error({ err: error }, "Server failed to start.");
+    process.exit(1);
+  }
 }
+
+void main();

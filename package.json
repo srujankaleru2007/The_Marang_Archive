@@ -1,0 +1,32 @@
+{
+  "name": "marang-archive",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Unified discovery, cataloging, library, and reading-tracking platform for serialized digital works.",
+  "scripts": {
+    "dev": "pnpm -r --if-present --parallel run dev",
+    "build": "pnpm -r --if-present run build",
+    "preview": "pnpm -r --if-present run preview",
+    "typecheck": "pnpm -r --if-present run typecheck",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 0",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "pnpm -r --if-present run test",
+    "clean": "pnpm -r --if-present run clean"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.6.0"
+}

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+coverage/
+pnpm-lock.yaml
+*.config.js
+*.config.cjs
+*.config.ts
+.eslintrc.cjs
+packages/*/dist/
+apps/*/dist/
+backend/dist/

@@ -1,0 +1,23 @@
+{
+  "name": "@marang/types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared TypeScript interfaces and enums for Marang Archive.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\""
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

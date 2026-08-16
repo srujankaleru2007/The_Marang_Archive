@@ -183,6 +183,36 @@ Status: Active | Superseded by ADR-N
 
 ---
 
+### [ADR-11] zod 3.25 + fastify-type-provider-zod v5, schemas from `zod/v4`
+
+**Decision:** The backend pins `zod@^3.25.76` with `fastify-type-provider-zod@^5.1.0`. All Fastify route/response schemas are created with `import { z } from "zod/v4"` (the v4-compat subpath shipped by zod 3.25). Plain v3 `z` is used everywhere else (e.g., `shared/config.ts`).
+
+**Reason:** The provider ≥5.x validates schemas with `instanceof $ZodType` against `zod/v4/core`. Schemas built from the regular v3 `z` do **not** pass that check and fail at serialization time with `FST_ERR_INVALID_SCHEMA`. Using the `zod/v4` import interops cleanly with the provider while staying on the zod 3.x line (matching `packages/validators`' `zod@^3.23.8`). The v4-native provider (7.x) requires zod 4, which would fork the workspace's zod major.
+
+**Alternatives considered:** zod 4 + provider 7.x (rejected — splits the monorepo on zod major versions), provider 4.x with v3 schemas (rejected — does not support Fastify 5).
+
+**Trade-offs:** Route schemas must import from `zod/v4`, which is a subtle source of confusion; a route that imports `z` from `zod` compiles fine but 500s at runtime. Worth the single zod major across the workspace.
+
+**Date:** 2026-08-16
+**Status:** Active
+
+---
+
+### [ADR-12] Phase 1 endpoint is `GET /api/v1/health` with data envelope
+
+**Decision:** Phase 1 exposes `GET /api/v1/health` returning `200 { data: { status: "ok" } }`. No auth. Request IDs and structured logging come from Fastify 5's built-in `LogController`/pino `reqId` — no hand-rolled middleware.
+
+**Reason:** `ImplementationPlan.md §4` names `GET /health`, but TRD §6.4 (response envelope) and §6.6 (`/v1` prefix for all routes) are authoritative. Fastify 5's error handler is `setErrorHandler` (the old `setErrorHandler` on the instance in pre-5 versions), and request IDs are native — adding custom middleware would duplicate framework behavior.
+
+**Alternatives considered:** Bare `GET /health` (rejected — violates versioning), custom request-id middleware (rejected — Fastify already provides `reqId`).
+
+**Trade-offs:** `/api/v1/health` is longer than the plan's `GET /health`; a deploy-time healthcheck URL is cosmetic and can be aliased later. No functional downside.
+
+**Date:** 2026-08-16
+**Status:** Active
+
+---
+
 ## Important Assumptions
 
 ### [ASM-1] First Source Integration Mechanism

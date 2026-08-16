@@ -60,7 +60,7 @@ module.exports = {
     },
     {
       // Package stubs — relax import/no-unresolved since packages aren't built yet
-      files: ["packages/*/src/**/*.ts"],
+      files: ["packages/*/src/**/*.ts", "backend/src/**/*.ts"],
       rules: {
         "import/no-unresolved": "off",
       },

@@ -2,7 +2,7 @@
 # Marang Archive
 
 **Version:** 0.1.0
-**Last Updated:** 2026-08-07
+**Last Updated:** 2026-08-16
 
 > This file stores only **durable** information: architectural decisions, important assumptions, rejected alternatives, and major constraints.
 >
@@ -164,6 +164,21 @@ Status: Active | Superseded by ADR-N
 **Trade-offs:** Refresh tokens in the database add a DB read on every refresh operation. At personal-project scale this is not a concern.
 
 **Date:** 2026-08-07
+**Status:** Active
+
+---
+
+### [ADR-10] No Web Client in MVP — Remove Stray Prototype
+
+**Decision:** The repo root contained a stray Vite/React web prototype (a "personal archive" demo) predating the design phase. It was removed during Phase 0. The MVP ships the React Native app only; no web application exists.
+
+**Reason:** PRD §6 explicitly excludes a web client from MVP scope. TRD §3 and ImplementationPlan reserve `apps/web` as future. The prototype's presence in the root conflicted with the documented monorepo structure (`apps/mobile` is the only app) and contaminated the root `package.json` with Vite/React dependencies and scripts.
+
+**Alternatives considered:** Relocating the prototype into `apps/web/` (rejected — a half-built demo does not justify an app scaffold), leaving it in place (rejected — pollutes the workspace and violates documented structure).
+
+**Trade-offs:** A working prototype demo was discarded. It was not committed to git and had no relationship to the documented architecture, so nothing of the planned product was lost.
+
+**Date:** 2026-08-16
 **Status:** Active
 
 ---

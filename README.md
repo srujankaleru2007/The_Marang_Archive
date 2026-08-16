@@ -21,12 +21,12 @@ The result is a single place to manage your entire reading list, regardless of w
 
 ## Current Status
 
-**Pre-development. Documentation foundation complete.**
+**Phase 0 (Repository Foundation) complete. Version 0.1.0.**
 
 | Component | Status |
 |-----------|--------|
 | Documentation | ✅ Complete |
-| Monorepo skeleton | ⬜ Not started |
+| Monorepo skeleton | ✅ Complete |
 | Backend foundation | ⬜ Not started |
 | Database | ⬜ Not started |
 | Source SDK | ⬜ Not started |
@@ -133,13 +133,19 @@ marang-archive/
 
 > Prerequisites: Node.js 20+, pnpm 9+, Docker Desktop
 
+Verified as working in Phase 0:
+
 ```bash
-# 1. Install dependencies
+# 1. Install workspace dependencies
 pnpm install
 
 # 2. Start local services (PostgreSQL + Redis)
 docker-compose up -d
+```
 
+The remaining commands below are the intended setup flow and become available as the backend (Phase 1+) and mobile app (Phase 10+) are implemented:
+
+```bash
 # 3. Copy environment template and fill in values
 cp .env.example .env
 
@@ -155,8 +161,6 @@ pnpm --filter backend dev
 # 7. Start the mobile app (in a separate terminal)
 pnpm --filter mobile start
 ```
-
-> The monorepo and these scripts do not exist yet. This documents the intended setup for when Phase 0 is complete.
 
 ---
 

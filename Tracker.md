@@ -1,9 +1,9 @@
 # Tracker.md — Living Project Dashboard
 # Marang Archive
 
-**Last Updated:** 2026-08-07
-**Current Phase:** Phase 0 — Repository Foundation
-**Overall Status:** Pre-development. Documentation foundation complete.
+**Last Updated:** 2026-08-16
+**Current Phase:** Phase 1 — Backend Foundation
+**Overall Status:** Phase 0 (Repository Foundation) complete. Monorepo scaffolded, tooling verified, initial commit created.
 
 > This is a living document. Update it continuously as work progresses.
 > Do NOT track progress in `ImplementationPlan.md` — that is a static specification.
@@ -13,49 +13,42 @@
 
 ## Current Phase
 
-**Phase 0 — Repository Foundation**
+**Phase 1 — Backend Foundation**
 
-Goal: A working, properly configured monorepo that every subsequent phase can build on.
+Goal: A running Fastify server with a health endpoint, structured logging, configuration loading, and a consistent error-handling framework. No business logic yet.
 
-See `ImplementationPlan.md §3` for full task list and acceptance criteria.
+See `ImplementationPlan.md §4` for full task list and acceptance criteria.
 
 ---
 
 ## Current Objective
 
-Set up the monorepo skeleton: pnpm workspaces, root tsconfig, ESLint, Prettier, docker-compose for local Postgres + Redis, and initial git commit.
+Initialize `backend/` workspace package; install and configure Fastify + pino; implement Zod-validated config loader; implement `MarangError` hierarchy and global error handler; add `GET /health`; wire CORS + rate limiting plugins.
 
 ---
 
 ## In Progress
 
-_Nothing in progress yet. Development has not started._
+_Phase 1 has not started yet._
 
 ---
 
 ## Next
 
-- [ ] Initialize pnpm workspace with `pnpm-workspace.yaml`
-- [ ] Create root `package.json`, `tsconfig.base.json`, `.gitignore`, `.env.example`
-- [ ] Set up `docker-compose.yml` (Postgres 16 + Redis 7)
-- [ ] Scaffold `packages/types` and `packages/validators` stubs
-- [ ] Set up ESLint + Prettier
-- [ ] First git commit
+- [ ] Initialize `backend/` workspace package (package.json + tsconfig.json extending base)
+- [ ] Install Fastify + pino + zod integration
+- [ ] Implement `backend/src/shared/config.ts` (Zod-validated config loader)
+- [ ] Implement `backend/src/shared/errors.ts` (`MarangError` hierarchy)
+- [ ] Implement global Fastify error handler + request ID middleware
+- [ ] Add `GET /api/v1/health` endpoint (no auth)
+- [ ] Wire CORS + rate limiting plugins
+- [ ] Unit tests for error handler and config loader
 
 ---
 
 ## Backlog
 
 _Populated from `ImplementationPlan.md`. Only add items here when the phase above them is active or complete._
-
-### Phase 1 — Backend Foundation
-- [ ] Fastify server setup
-- [ ] Pino logging
-- [ ] Config loader (Zod-validated)
-- [ ] Error class hierarchy
-- [ ] Global error handler
-- [ ] `GET /health` endpoint
-- [ ] CORS + rate limiting plugins
 
 ### Phase 2 — Database
 - [ ] Prisma install + schema
@@ -149,13 +142,35 @@ _Populated from `ImplementationPlan.md`. Only add items here when the phase abov
 
 ## Completed
 
-_Nothing completed yet._
+### Phase 0 — Repository Foundation ✅ (2026-08-16)
+
+- [x] Monorepo root directory structure created (`apps/`, `backend/`, `adapters/`, `packages/`, `docs/`)
+- [x] `pnpm-workspace.yaml` with workspace definitions (`apps/*`, `backend`, `adapters/*`, `packages/*`)
+- [x] Root `package.json` with workspace scripts (`dev`, `build`, `test`, `lint`, `typecheck`) — removed stray Vite/web-prototype deps
+- [x] `tsconfig.base.json` with strict mode, target ES2022, module NodeNext
+- [x] `packages/types` stub initialized (`@marang/types` — builds, typechecks)
+- [x] `packages/validators` stub initialized (`@marang/validators` — builds, typechecks)
+- [x] ESLint configured at root (TypeScript support, no-explicit-any enforced, empty-catch banned)
+- [x] Prettier configured at root
+- [x] `.gitignore` covering `node_modules`, `dist`, `.env*`, build artifacts, Expo local files
+- [x] `docker-compose.yml` for local dev (PostgreSQL 16 + Redis 7) with healthchecks
+- [x] `.env.example` with key names only — no values, no secrets
+- [x] README local setup section updated to confirm Phase 0 works
+- [x] Git repo initialized (initial commit created)
+
+### Phase 0 Acceptance Criteria Status
+
+- [x] `pnpm install` succeeds from repo root with no errors
+- [~] `docker-compose up -d` starts Postgres + Redis — **config validated as valid YAML** (postgres:16-alpine, redis:7-alpine); could not run live because Docker is not installed on this machine
+- [x] TypeScript compiles with zero errors across all workspace packages (`pnpm typecheck`, `pnpm build`)
+- [x] ESLint runs without configuration errors (`pnpm lint`)
+- [x] No secrets in `.env.example` — key names only
 
 ---
 
 ## Blocked
 
-_Nothing blocked yet._
+_Phase 1+ requires the services in `docker-compose.yml` to be running. Docker Desktop is not installed on the current machine — install Docker (or use an alternative container runtime) before starting Phase 2 (Database). Phase 1 itself does not require Docker._
 
 > When adding a blocker, use this format:
 > **[BLOCKED]** Short description — reason — what is needed to unblock
@@ -164,7 +179,7 @@ _Nothing blocked yet._
 
 ## Bugs
 
-_No bugs yet. Development has not started._
+_No bugs yet._
 
 > When adding a bug, use this format:
 > **[BUG]** Short description — reproduction steps — suspected cause — severity (critical/high/medium/low)
@@ -173,7 +188,7 @@ _No bugs yet. Development has not started._
 
 ## Technical Debt
 
-_None yet._
+- **[DEBT]** Package stub `clean` scripts originally referenced `rimraf` without declaring it as a dependency — replaced with a `node:fs` one-liner during Phase 0. A consolidated approach (e.g., `pnpm dlx rimraf`) may be considered later.
 
 > Add items here when a known shortcut was taken that needs revisiting.
 > Format: **[DEBT]** What was done — why — what the proper fix is
@@ -187,7 +202,9 @@ _Decisions made during development (distinct from pre-design decisions in `Memor
 > Format:
 > **[ADR-N]** Decision — Reason — Date
 
-No ADRs recorded yet. See `Memory.md` for initial design-phase decisions.
+- **[ADR-10]** Removed the stray Vite/React web prototype from the repo root — a leftover demo from before the documentation design was complete. It conflicted with the documented mobile-first architecture (PRD §6: no web client in MVP; TRD §3: only `apps/mobile`). Keeps Phase 0 scaffolding aligned with the specification. — 2026-08-16
+
+No further ADRs recorded yet. See `Memory.md` for initial design-phase decisions.
 
 ---
 

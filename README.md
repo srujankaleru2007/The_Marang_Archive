@@ -21,13 +21,13 @@ The result is a single place to manage your entire reading list, regardless of w
 
 ## Current Status
 
-**Phase 0 (Repository Foundation) complete. Version 0.1.0.**
+**Phase 1 (Backend Foundation) complete. Version 0.1.0.**
 
 | Component | Status |
 |-----------|--------|
 | Documentation | ✅ Complete |
 | Monorepo skeleton | ✅ Complete |
-| Backend foundation | ⬜ Not started |
+| Backend foundation | ✅ Complete |
 | Database | ⬜ Not started |
 | Source SDK | ⬜ Not started |
 | First source adapter | ⬜ Not started |
@@ -143,7 +143,7 @@ pnpm install
 docker-compose up -d
 ```
 
-The remaining commands below are the intended setup flow and become available as the backend (Phase 1+) and mobile app (Phase 10+) are implemented:
+The remaining commands below are the intended setup flow for the database and mobile app:
 
 ```bash
 # 3. Copy environment template and fill in values
@@ -155,7 +155,7 @@ pnpm --filter backend db:migrate
 # 5. Seed development data
 pnpm --filter backend db:seed
 
-# 6. Start the backend
+# 6. Start the backend (health endpoint: /api/v1/health)
 pnpm --filter backend dev
 
 # 7. Start the mobile app (in a separate terminal)
